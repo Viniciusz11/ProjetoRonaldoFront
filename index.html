@@ -47,18 +47,15 @@
     </footer>
 
     <script>
-        // Script simples para demonstração
+
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Aqui você normalmente enviaria os dados para o backend
-            // Como é apenas um frontend, vamos apenas mostrar uma mensagem
+
             alert(`Login realizado com sucesso!\nUsuário: ${username}`);
             
-            // Em um caso real, você redirecionaria para a página principal após autenticação
-            // window.location.href = 'dashboard.html';
         });
     </script>
 </body>
