@@ -39,20 +39,20 @@
     
     <script>
         function showMessage(text, isError = false) {
-            const messageDiv = document.getElementById("message");
+            const messageDiv = document.getElementById('message');
             messageDiv.textContent = text;
-            messageDiv.style.display = "block";
-            messageDiv.style.backgroundColor = isError ? "#ffebee" : "#e8f5e8";
-            messageDiv.style.color = isError ? "#c62828" : "#2e7d32";
-            messageDiv.style.border = isError ? "1px solid #ef5350" : "1px solid #66bb6a";
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = isError ? '#ffebee' : '#e8f5e8';
+            messageDiv.style.color = isError ? '#c62828' : '#2e7d32';
+            messageDiv.style.border = isError ? '1px solid #ef5350' : '1px solid #66bb6a';
         }
 
-        document.getElementById("login-form").addEventListener("submit", async function(event) {
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             
-            const nome = document.getElementById("username").value;
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("password").value;
+            const nome = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('password').value;
 
             const clienteData = {
                 nome: nome,
@@ -61,35 +61,33 @@
             };
 
             try {
-                // Use a URL pública do backend
-                const backendUrl = "https://8080-irsypwn7uwz6lcadjnnu1-82b38eb0.manusvm.computer/api/clientes";
+                // Use a URL pública do Render
+                const backendUrl = 'https://projetoronaldo.onrender.com/api/clientes';
                 
                 const response = await fetch(backendUrl, {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
-                    mode: "cors",
+                    mode: 'cors',
                     body: JSON.stringify(clienteData)
                 });
 
                 if (response.ok) {
                     const result = await response.json();
                     showMessage(`Cliente cadastrado com sucesso! ID: ${result.id}, Nome: ${result.nome}`, false);
-                    document.getElementById("login-form").reset();
+                    document.getElementById('login-form').reset();
                 } else {
                     const errorText = await response.text();
-                    console.error("Erro na resposta:", response.status, errorText);
+                    console.error('Erro na resposta:', response.status, errorText);
                     showMessage(`Erro ao cadastrar cliente: ${response.status} - ${errorText}`, true);
                 }
             } catch (error) {
-                console.error("Erro na requisição:", error);
-                showMessage("Erro ao conectar com o backend. Verifique se o servidor está rodando e a URL está correta.", true);
+                console.error('Erro na requisição:', error);
+                showMessage('Erro ao conectar com o backend. Verifique se o servidor está rodando e a URL está correta.', true);
             }
         });
     </script>
 </body>
 </html>
-
-
