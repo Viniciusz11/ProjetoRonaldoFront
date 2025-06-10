@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login de Usuários</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
     <div class="container">
@@ -13,52 +13,67 @@
                 <h1>Login</h1>
                 <p>Entre com suas credenciais</p>
             </div>
-            
+
             <form id="login-form">
                 <div class="form-group">
-                    <label for="username">Usuário</label>
-                    <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário ou email" required>
+                    <label for="username">Usuário (email)</label>
+                    <input type="text" id="username" name="username" placeholder="Digite seu email" required />
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required />
                 </div>
-                
+
                 <div class="form-options">
                     <div class="remember-me">
-                        <input type="checkbox" id="remember" name="remember">
+                        <input type="checkbox" id="remember" name="remember" />
                         <label for="remember">Lembrar-me</label>
                     </div>
                     <a href="#" class="forgot-password">Esqueci minha senha</a>
                 </div>
-                
+
                 <button type="submit" class="login-button">Entrar</button>
             </form>
-            
+
             <div class="register-link">
                 <p>Não tem uma conta? <a href="#">Cadastre-se</a></p>
             </div>
         </div>
     </div>
-    
+
     <footer>
         <p>&copy; 2025 Sistema de Login. Todos os direitos reservados.</p>
     </footer>
 
     <script>
-        // Script simples para demonstração
-        document.getElementById('login-form').addEventListener('submit', function(event) {
+        document.getElementById('login-form').addEventListener('submit', async function (event) {
             event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Aqui você normalmente enviaria os dados para o backend
-            // Como é apenas um frontend, vamos apenas mostrar uma mensagem
-            alert(`Login realizado com sucesso!\nUsuário: ${username}`);
-            
-            // Em um caso real, você redirecionaria para a página principal após autenticação
-            // window.location.href = 'dashboard.html';
+
+            const email = document.getElementById('username').value;
+            const senha = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:8080/api/clientes/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Login realizado com sucesso!\nUsuário: ${data.nome}`);
+                    // Aqui redirecione para página principal, ex:
+                    // window.location.href = 'dashboard.html';
+                } else {
+                    alert('Usuário ou senha inválidos');
+                }
+            } catch (error) {
+                alert('Erro ao conectar com o servidor');
+                console.error(error);
+            }
         });
     </script>
 </body>
