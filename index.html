@@ -16,8 +16,13 @@
             
             <form id="login-form">
                 <div class="form-group">
-                    <label for="username">Usuário</label>
-                    <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário ou email" required>
+                    <label for="username">Nome</label>
+                    <input type="text" id="username" name="username" placeholder="Digite seu nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Digite seu email" required>
                 </div>
                 
                 <div class="form-group">
@@ -33,46 +38,79 @@
                     <a href="#" class="forgot-password">Esqueci minha senha</a>
                 </div>
                 
-                <button type="submit" class="login-button">Entrar</button>
+                <button type="submit" class="login-button">Cadastrar/Login</button>
             </form>
             
             <div class="register-link">
                 <p>Não tem uma conta? <a href="#">Cadastre-se</a></p>
             </div>
+            
+            <div id="message" style="margin-top: 20px; padding: 10px; border-radius: 5px; display: none;"></div>
         </div>
     </div>
     
     <footer>
         <p>&copy; 2025 Sistema de Login. Todos os direitos reservados.</p>
     </footer>
-       
 
+    <script>
+        function showMessage(text, isError = false) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = isError ? '#ffebee' : '#e8f5e8';
+            messageDiv.style.color = isError ? '#c62828' : '#2e7d32';
+            messageDiv.style.border = isError ? '1px solid #ef5350' : '1px solid #66bb6a';
+        }
 
-</script>
-            document.getElementById(\'login-form\').addEventListener(\'submit\', function(event) {
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
             event.preventDefault();
-            const username = document.getElementById(\'username\').value;
-            const password = document.getElementById(\'password\').value;
+            
+            const nome = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('password').value;
 
-            fetch(\'http://localhost:8080/api/auth/login\', {
-                method: \'POST\',
-                headers: {
-                    \'Content-Type\': \'application/json\'
-                },
-                body: JSON.stringify({ username: username, password: password })
-            })
-            .then(response => {
+            // Dados para enviar ao backend
+            const clienteData = {
+                nome: nome,
+                email: email,
+                senha: senha
+            };
+
+            try {
+                // Substitua pela URL do seu backend quando fizer o deploy
+                const backendUrl = 'http://localhost:8080/api/clientes';
+                
+                const response = await fetch(backendUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors',
+                    body: JSON.stringify(clienteData)
+                });
+
                 if (response.ok) {
-                    alert(\'Login realizado com sucesso!\');
-                    // window.location.href = \'/dashboard.html\';
+                    const result = await response.json();
+                    showMessage(`Cliente cadastrado com sucesso! ID: ${result.id}, Nome: ${result.nome}`, false);
+                    
+                    // Limpar o formulário após sucesso
+                    document.getElementById('login-form').reset();
+                    
+                    // Em um caso real, você redirecionaria para a página principal
+                    // window.location.href = 'dashboard.html';
                 } else {
-                    alert(\'Usuário ou senha inválidos.\');
+                    const errorText = await response.text();
+                    console.error('Erro na resposta:', response.status, errorText);
+                    showMessage(`Erro ao cadastrar cliente: ${response.status} - ${errorText}`, true);
                 }
-            })
-            .catch(error => {
-                console.error(\'Erro na requisição:\', error);
-                alert(\'Ocorreu um erro ao tentar fazer login. Tente novamente mais tarde.\');
-            });
-        });   </script>
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                showMessage('Erro ao conectar com o backend. Verifique se o servidor está rodando e a URL está correta.', true);
+            }
+        });
+    </script>
 </body>
 </html>
+
