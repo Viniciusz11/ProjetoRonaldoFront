@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login de Usuários</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <div class="login-card">
-            <div class="header">
-                <h1>Login</h1>
-                <p>Entre com suas credenciais</p>
-            </div>
+@ -16,8 +16,13 @@
             
             <form id="login-form">
                 <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário ou email" required>
                     <label for="username">Nome</label>
                     <input type="text" id="username" name="username" placeholder="Digite seu nome" required>
                 </div>
@@ -26,34 +14,48 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+                    <a href="#" class="forgot-password">Esqueci minha senha</a>
                 </div>
                 
+                <button type="submit" class="login-button">Entrar</button>
                 <button type="submit" class="login-button">Cadastrar/Login</button>
             </form>
+            
+            <div class="register-link">
+                <p>Não tem uma conta? <a href="#">Cadastre-se</a></p>
+            </div>
             
             <div id="message" style="margin-top: 20px; padding: 10px; border-radius: 5px; display: none;"></div>
         </div>
     </div>
     
+    <footer>
+        <p>&copy; 2025 Sistema de Login. Todos os direitos reservados.</p>
+    </footer>
+       
+
     <script>
         function showMessage(text, isError = false) {
-            const messageDiv = document.getElementById("message");
+            const messageDiv = document.getElementById('message');
             messageDiv.textContent = text;
-            messageDiv.style.display = "block";
-            messageDiv.style.backgroundColor = isError ? "#ffebee" : "#e8f5e8";
-            messageDiv.style.color = isError ? "#c62828" : "#2e7d32";
-            messageDiv.style.border = isError ? "1px solid #ef5350" : "1px solid #66bb6a";
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = isError ? '#ffebee' : '#e8f5e8';
+            messageDiv.style.color = isError ? '#c62828' : '#2e7d32';
+            messageDiv.style.border = isError ? '1px solid #ef5350' : '1px solid #66bb6a';
         }
 
-        document.getElementById("login-form").addEventListener("submit", async function(event) {
+</script>
+            document.getElementById(\'login-form\').addEventListener(\'submit\', function(event) {
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
             event.preventDefault();
+            const username = document.getElementById(\'username\').value;
+            const password = document.getElementById(\'password\').value;
             
-            const nome = document.getElementById("username").value;
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("password").value;
+            const nome = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('password').value;
 
+            // Dados para enviar ao backend
             const clienteData = {
                 nome: nome,
                 email: email,
@@ -61,35 +63,55 @@
             };
 
             try {
-                // Use a URL pública do backend
-                const backendUrl = "https://8080-irsypwn7uwz6lcadjnnu1-82b38eb0.manusvm.computer/api/clientes";
+                // Substitua pela URL do seu backend quando fizer o deploy
+                const backendUrl = 'http://localhost:8080/api/clientes';
                 
                 const response = await fetch(backendUrl, {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
-                    mode: "cors",
+                    mode: 'cors',
                     body: JSON.stringify(clienteData)
                 });
 
+            fetch(\'http://localhost:8080/api/auth/login\', {
+                method: \'POST\',
+                headers: {
+                    \'Content-Type\': \'application/json\'
+                },
+                body: JSON.stringify({ username: username, password: password })
+            })
+            .then(response => {
                 if (response.ok) {
+                    alert(\'Login realizado com sucesso!\');
+                    // window.location.href = \'/dashboard.html\';
                     const result = await response.json();
                     showMessage(`Cliente cadastrado com sucesso! ID: ${result.id}, Nome: ${result.nome}`, false);
-                    document.getElementById("login-form").reset();
+                    
+                    // Limpar o formulário após sucesso
+                    document.getElementById('login-form').reset();
+                    
+                    // Em um caso real, você redirecionaria para a página principal
+                    // window.location.href = 'dashboard.html';
                 } else {
+                    alert(\'Usuário ou senha inválidos.\');
                     const errorText = await response.text();
-                    console.error("Erro na resposta:", response.status, errorText);
+                    console.error('Erro na resposta:', response.status, errorText);
                     showMessage(`Erro ao cadastrar cliente: ${response.status} - ${errorText}`, true);
                 }
+            })
+            .catch(error => {
+                console.error(\'Erro na requisição:\', error);
+                alert(\'Ocorreu um erro ao tentar fazer login. Tente novamente mais tarde.\');
+            });
+        });   </script>
             } catch (error) {
-                console.error("Erro na requisição:", error);
-                showMessage("Erro ao conectar com o backend. Verifique se o servidor está rodando e a URL está correta.", true);
+                console.error('Erro na requisição:', error);
+                showMessage('Erro ao conectar com o backend. Verifique se o servidor está rodando e a URL está correta.', true);
             }
-        });
+        );
     </script>
 </body>
 </html>
-
-
